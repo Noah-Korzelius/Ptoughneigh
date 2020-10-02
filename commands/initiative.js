@@ -1,3 +1,8 @@
+/**
+ * ---TODO---
+ * implement initiative list + functionality
+ * make another command for that
+ */
 const { execute } = require("./roll");
 
 module.exports = {
@@ -8,13 +13,12 @@ module.exports = {
         let roll;
         let dex;
         
-        console.log(`Message author: ${message.author}`); 
+        console.log(`Message author: ${message.author}`);
         BOT.channels.cache.get(ID).messages.fetch({limit: 100})
         .then(messages => dex = Number(BOT.commands.get('roll')
         .getDex(BOT.commands.get('roll').getUserMessages(message.author, messages))))
         .then(dex => roll = die + dex)
         .then(roll => message.reply(`you rolled a ${roll}(${die} + ${dex})`))
         .catch(console.error);
-
     }
 }

@@ -1,8 +1,6 @@
 /**
  *   ---TODO---
  * Implement multiple rolls on a single call for
- * each rolld* function
- * implement less specific versions of functions, for ease of editing
  */
 module.exports = {
     name: "roll",
@@ -42,10 +40,10 @@ module.exports = {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     },
     getUserMessages(id, msgs){
-        const iterator = msgs[Symbol.iterator]();
+        const count = msgs[Symbol.iterator]();
         let userMsgs = [''];
         console.log(`ID passed: ${id}`);
-        for(const msg of iterator){
+        for(const msg of count){
             // console.log(msg[1].author.username);
             // console.log(msg[1].author.id);
             // console.log(msg[1].content);
