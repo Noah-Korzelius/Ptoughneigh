@@ -18,7 +18,7 @@ module.exports = {
         .then(messages => dex = Number(BOT.commands.get('roll')
         .getDex(BOT.commands.get('roll').getUserMessages(message.author, messages))))
         .then(dex => roll = die + dex)
-        .then(roll => message.reply(`you rolled a ${roll}(${die} + ${dex})`))
+        .then(roll => message.reply(`your initiative is ${roll} (${die} + ${dex})`))
         .catch(console.error);
     }
 }

@@ -13,6 +13,8 @@ module.exports = {
         "-!checkChar: rolls a d20 and adds your charisma modifier\n" +
         "\n" +
         "-!initiative: rolls a d20 and adds your dexterity(initiative) modifier\n" +
+        "-!priority: sends the current order of priority\n" +
+        "-!clear: clear the list of initiative\n" +
         "\n" +
         "!roll + d4, d6, d8, d10, d12, d20: rolls the indicated die");
     }

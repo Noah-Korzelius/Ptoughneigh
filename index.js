@@ -13,7 +13,7 @@ const REGISTRY = new Array('733401536037781585', '758512646005325875', '75553400
 let collector; //To save bot output
 let ID;
 let temp; //generic variable 
-let turnOrder = new Array();
+let turnOrder = new Array(); //holds responses to !initiative
 let log = new Array(); //hold bot's responses to commands
 //const ID = '758512646005325875'; ID for the stat channel 733401536037781585 (training grounds) 
                                 //ID for the stat channel 755534009668206754 (the boyz d&d chat)
@@ -51,22 +51,31 @@ BOT.on('message', message => {
     const args = message.content.slice(PREFIX.length).split(/ +/);
     const command = args.shift().toLowerCase();
 
-    if (command === 'ping'){
+    if (command === 'ping'){ // ---ping---
         BOT.commands.get('ping').execute(message, args);
-    } else if (command === 'initiative'){
+    } else if (command === 'initiative'){ // ---initiative---
         BOT.commands.get('initiative').execute(BOT, ID, message, args);
-    } else if (command.endsWith('check')){
+    } else if (command === 'priority' && turnOrder.length > 0){ // ---priority---
+        BOT.commands.get('priority').execute(BOT, ID, message, turnOrder, args);
+    } else if (command === 'priority'){
+        message.channel.send("No one's in combat!");
+    } else if (command === 'clear'){ // ---clear---
+        turnOrder = BOT.commands.get('clear').execute(turnOrder);
+        message.channel.send("Priority list cleared!");
+    } else if (command.endsWith('check')){ // ---check---
         BOT.commands.get('check').execute(BOT, ID, message, command);
-    } else if (command === 'roll'){
+    } else if (command === 'roll'){ // ---roll---
         //console.log(args[0]); debugging comment
         message.reply(`you rolled a ${BOT.commands.get('roll').roll(Number(args[0].slice(1)))}`);
-    } else if (command === 'help'){
+    } else if (command === 'help'){ // ---help---
         BOT.commands.get('help').execute(message, args);
     }
-    collector.on('collect', m => {
+    collector.on('collect', m => { // ---collector---
         log.push(m);
+        if (command === 'initiative'){
+            turnOrder.push(m);
+        }
         console.log("Collected: " + m);
-        console.log(log);
     });
 })
 
