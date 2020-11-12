@@ -13,6 +13,8 @@ module.exports = {
         "-!checkChar: rolls a d20 and adds your charisma modifier\n" +
         "\n" +
         "-!initiative: rolls a d20 and adds your dexterity(initiative) modifier\n" +
+        "-!add <initiative> <name>: adds <name> to the priority list with <initiative>" +
+        "-!rm <name>: removes all instances of <name> on the priority list" +
         "-!priority: sends the current order of priority\n" +
         "-!clear: clear the list of initiative\n" +
         "\n" +

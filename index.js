@@ -81,7 +81,7 @@ BOT.on('message', message => {
         if (command === 'initiative'){
             turnOrder.push([m.content.split(' ')[4], m.content.split(' ')[0]]);
         }
-        console.log("Collected: " + m);
+        console.log(`Collected ${command}: ` + m);
     });
 })
 
