@@ -34,6 +34,7 @@ BOT.once('ready', () =>{
     console.log('This bot is online!');
     PROMPT.question('which server would you like to use: \n(0)Training Grounds, \n(1)Homies from home, see\n(2)The Boyz D&D chat\n', channel => {
     ID = REGISTRY[channel];
+    console.log(`Ptoughneigh will be assisting ${channel}`);
     PROMPT.close();
 });
 });
@@ -50,6 +51,7 @@ BOT.on('message', message => {
     collector = new DISCORD.MessageCollector(message.channel, m => m.author.bot, { max: 1 });
     const args = message.content.slice(PREFIX.length).split(/ +/);
     const command = args.shift().toLowerCase();
+    console.log(args);
 
     if (command === 'ping'){ // ---ping---
         BOT.commands.get('ping').execute(message, args);
@@ -59,6 +61,10 @@ BOT.on('message', message => {
         BOT.commands.get('priority').execute(BOT, ID, message, turnOrder, args);
     } else if (command === 'priority'){
         message.channel.send("No one's in combat!");
+    } else if (command === 'add'){
+        turnOrder = BOT.commands.get('add').execute(turnOrder, message, args); 
+    } else if (command === 'rm'){
+        turnOrder = BOT.commands.get('remove').execute(turnOrder, message, args)
     } else if (command === 'clear'){ // ---clear---
         turnOrder = BOT.commands.get('clear').execute(turnOrder);
         message.channel.send("Priority list cleared!");
@@ -73,7 +79,7 @@ BOT.on('message', message => {
     collector.on('collect', m => { // ---collector---
         log.push(m);
         if (command === 'initiative'){
-            turnOrder.push(m);
+            turnOrder.push([m.content.split(' ')[4], m.content.split(' ')[0]]);
         }
         console.log("Collected: " + m);
     });
