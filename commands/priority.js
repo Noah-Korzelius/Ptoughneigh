@@ -3,17 +3,13 @@ const { execute } = require('./util');
 module.exports = {
     name: 'priority',
     description: 'creates an ordered list of most recent initiative calls',
-    execute(BOT, ID, message, turnOrder, args){
-        let msg;
-        let temp = new Array();
-        let priority = new Array();
+    execute(BOT, message, turnOrder){
         
-        // for (let x = 0; x < turnOrder.length; x++){
-        //     if (turnOrder[x])
-        //     temp = [turnOrder[x].content.split(' ')[4], turnOrder[x].content.split(' ')[0]];
-        //     console.log(temp);
-        //     priority.push(temp);
-        // }
+        if(turnOrder.length < 1) {
+            message.channel.send("No one's in combat!")
+            return;
+        }
+
         console.log("list before sorting: " + turnOrder);
         turnOrder.sort(function(a, b){return b[0]-a[0]});
         console.log("list before sending: " + turnOrder);

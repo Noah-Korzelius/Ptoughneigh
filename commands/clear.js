@@ -5,6 +5,7 @@ module.exports = {
         while (inList.length > 0){
             inList.pop();
         }
+        message.channel.send("Priority list cleared!");
         return inList;
     }
 }

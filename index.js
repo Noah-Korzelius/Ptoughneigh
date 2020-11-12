@@ -12,7 +12,6 @@ const fs = require('fs');
 const REGISTRY = new Array('733401536037781585', '758512646005325875', '755534009668206754');
 let collector; //To save bot output
 let ID;
-let temp; //generic variable 
 let turnOrder = new Array(); //holds responses to !initiative
 let log = new Array(); //hold bot's responses to commands
 //const ID = '758512646005325875'; ID for the stat channel 733401536037781585 (training grounds) 
@@ -54,29 +53,45 @@ BOT.on('message', message => {
     console.log(args);
 
     if (command === 'ping'){ // ---ping---
+
         BOT.commands.get('ping').execute(message, args);
+
     } else if (command === 'initiative'){ // ---initiative---
+
         BOT.commands.get('initiative').execute(BOT, ID, message, args);
-    } else if (command === 'priority' && turnOrder.length > 0){ // ---priority---
-        BOT.commands.get('priority').execute(BOT, ID, message, turnOrder, args);
-    } else if (command === 'priority'){
-        message.channel.send("No one's in combat!");
-    } else if (command === 'add'){
+
+    } else if (command === 'priority'){ // ---priority---
+
+        BOT.commands.get('priority').execute(BOT, message, turnOrder);
+
+    } else if (command === 'add'){ // ---add---
+
         turnOrder = BOT.commands.get('add').execute(turnOrder, message, args); 
-    } else if (command === 'rm'){
-        turnOrder = BOT.commands.get('remove').execute(turnOrder, message, args)
+
+    } else if (command === 'rm'){ // ---rm---
+
+        turnOrder = BOT.commands.get('remove').execute(turnOrder, message, args);
+
     } else if (command === 'clear'){ // ---clear---
+
         turnOrder = BOT.commands.get('clear').execute(turnOrder);
-        message.channel.send("Priority list cleared!");
+
     } else if (command.endsWith('check')){ // ---check---
+
         BOT.commands.get('check').execute(BOT, ID, message, command);
+
     } else if (command === 'roll'){ // ---roll---
-        //console.log(args[0]); debugging comment
+
         message.reply(`you rolled a ${BOT.commands.get('roll').roll(Number(args[0].slice(1)))}`);
+
     } else if (command === 'help'){ // ---help---
+
         BOT.commands.get('help').execute(message, args);
+
     }
-    collector.on('collect', m => { // ---collector---
+    
+    // ---Collector---
+    collector.on('collect', m => {
         log.push(m);
         if (command === 'initiative'){
             turnOrder.push([m.content.split(' ')[4], m.content.split(' ')[0]]);
