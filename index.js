@@ -6,7 +6,7 @@ const PROMPT = require('readline').createInterface({
     output: process.stdout
 });
 const BOT = new DISCORD.Client();
-const TOKEN = 'NzMzMzM4ODUwODcyNjU1OTQz.XxBtBg.IKe9aLY1PI0V22zlynWzINhpAXE';
+const TOKEN = '';
 const PREFIX = "!";
 const fs = require('fs');
 const REGISTRY = new Array('733401536037781585', '758512646005325875', '755534009668206754');
@@ -74,7 +74,7 @@ BOT.on('message', message => {
 
     } else if (command === 'clear'){ // ---clear---
 
-        turnOrder = BOT.commands.get('clear').execute(turnOrder);
+        turnOrder = BOT.commands.get('clear').execute(turnOrder, message);
 
     } else if (command.endsWith('check')){ // ---check---
 
@@ -82,7 +82,7 @@ BOT.on('message', message => {
 
     } else if (command === 'roll'){ // ---roll---
 
-        message.reply(`you rolled a ${BOT.commands.get('roll').roll(Number(args[0].slice(1)))}`);
+        BOT.commands.get('roll').execute(BOT, ID, message, args);
 
     } else if (command === 'help'){ // ---help---
 

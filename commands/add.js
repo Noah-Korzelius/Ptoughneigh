@@ -4,7 +4,8 @@ module.exports ={
     execute(turnOrder, message, args){
         console.log(typeof args[0]);
         console.log(args.length);
-        if (args[0].search(/\D/) == -1){ // just numbers
+        if (args[0].search(/[^-]\D/) == -1 && args.length > 1){ // just numbers
+            
             console.log("args[0] is a number");
             for (x = 2; x < args.length; x++){
                 args[1] = args[1] + " " + args[x];
@@ -12,7 +13,8 @@ module.exports ={
             
             turnOrder.push([args[0], args[1]]);
 
-        } else if (args[0].search(/\D/) > -1) {
+        } else if (args[0].search(/\D/) > -1 && args.length > 1) {
+            
             console.log("args[0] is a string");
             for (let x = 1; x < args.length-1; x++){
                 args[0] = args[0] + " " + args[x];

@@ -1,37 +1,45 @@
-/**
- *   ---TODO---
- * Implement multiple rolls on a single call for
- */
 module.exports = {
     name: "roll",
     description: "a list of dice rolling functions for other functions to call",
+    execute(BOT, ID, message, args){
+        let result = 0;
+        let mods = new Array;
+        let addition = "";
+        if (args[0].search(/\dd/) > -1) { //multiple dice to roll
+            for (let x = 0; x < args[0].charAt(0)-1; x++){
+                console.log(args[0].slice(args[0].search(/d/)+1));
+                mods.push(this.roll(args[0].slice(args[0].search(/d/)+1)));
+                result = result + mods[x];
+            }
+            args[0] = args[0].slice(args[0].search(/d/));
+            console.log(`args[0] after multiplce dice rolled: ${args[0]}`);
+        }
+        // if (args.length > 1 && args[1].search(/[a-zA-z]\D\D/) > -1) {//add a stat
+
+        //     BOT.channels.cache.get(ID).messages.fetch({limit: 100})
+        //     .then(messages => stat = Number(BOT.commands.get('roll')
+        //     .get(args[1], BOT.commands.get('roll').getUserMessages(message.author, messages))))
+        //     .then(stat => result = result + stat)
+        //     .catch(console.error);
+
+        // }
+        if (args[args.length-1].search(/\+/) > -1) { //adds a provided num 
+
+            console.log(args[args.length-1]);
+            mods.push(Number(args[args.length-1].match(/\d+/)));
+            result = result + mods[mods.length-1];
+            
+        }
+        for (let x = 0; x < mods.length; x++){
+                addition = addition + mods[x] + " + ";
+        }
+        mods.push(this.roll(Number(args[0].slice(1))));
+        result = result + mods[mods.length-1];
+        message.reply(`you rolled a ${result} (${mods})`);
+
+    },
     roll(max){
         let die = this.getRandomIntInclusive(1, max);
-        return die;
-    },
-    rollD4(){
-        let die = this.getRandomIntInclusive(1, 4);
-        //console.log(die);
-        return die; 
-    },
-    rollD6(){
-        let die = this.getRandomIntInclusive(1, 6);
-        return die;
-    },
-    rollD8(){
-        let die = this.getRandomIntInclusive(1, 8);
-        return die;
-    },
-    rollD10(){
-        let die = this.getRandomIntInclusive(1, 10);
-        return die;
-    },
-    rollD12(){
-        let die = this.getRandomIntInclusive(1, 12);
-        return die;
-    },
-    rollD20(){
-        let die = this.getRandomIntInclusive(1, 20);
         return die;
     },
     getRandomIntInclusive(min, max){

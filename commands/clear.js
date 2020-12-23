@@ -1,7 +1,7 @@
 module.exports = {
     name: 'clear',
     description: 'clears the initiative list',
-    execute(inList){
+    execute(inList, message){
         while (inList.length > 0){
             inList.pop();
         }
