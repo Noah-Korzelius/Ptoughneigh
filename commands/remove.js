@@ -1,3 +1,4 @@
+//this needs to be fixed
 module.exports ={
     name: "remove",
     description: "removes an entry from the priority list",
@@ -10,7 +11,7 @@ module.exports ={
         for (let x = 0; x < turnOrder.length; x++){
             console.log(turnOrder[x]);
             if (turnOrder[x][1] === args[0]){
-                turnOrder.splice(x);
+                turnOrder.splice(x, 1);
                 message.reply(`removed ${args[0]} from the list`);
             }
         }

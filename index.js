@@ -5,13 +5,20 @@ const PROMPT = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout
 });
+const fs = require('fs');
+const path = require('path');
+const { Character } = require('./classes/character');
+
 const BOT = new DISCORD.Client();
 const TOKEN = '';
 const PREFIX = "!";
-const fs = require('fs');
 const REGISTRY = new Array('733401536037781585', '758512646005325875', '755534009668206754');
+const CAMPAIGNS = new Array('cmpn_1', 'cmpn_1', 'cmpn_2');
 let collector; //To save bot output
-let ID;
+//let session = "cmpn_1"; //tracks who the bot is helping right now
+let ID; //probably going to be depreciated
+let session = "campaigns/";
+let party = new Array(); //characters in the campaign
 let turnOrder = new Array(); //holds responses to !initiative
 let log = new Array(); //hold bot's responses to commands
 //const ID = '758512646005325875'; ID for the stat channel 733401536037781585 (training grounds) 
@@ -32,10 +39,26 @@ for (const file of commandFiles){
 BOT.once('ready', () =>{
     console.log('This bot is online!');
     PROMPT.question('which server would you like to use: \n(0)Training Grounds, \n(1)Homies from home, see\n(2)The Boyz D&D chat\n', channel => {
-    ID = REGISTRY[channel];
-    console.log(`Ptoughneigh will be assisting ${channel}`);
-    PROMPT.close();
-});
+        ID = REGISTRY[channel];
+        let cmpn = CAMPAIGNS[channel]; //eventually, this will replace the channel registry
+        console.log(`Ptoughneigh will be assisting ${channel}`);
+        session = path.join(session, cmpn);
+        //character = new Character(`campaigns/cmpn_1/sythe.txt`);//this won't be hardcoded after implementation
+        try {
+            
+            let files = fs.readdirSync(session, 'utf-8');
+            files.forEach(file => {
+                party.push(new Character(session + "/" + file));
+            });
+            console.log(party);
+            
+        } catch (err) {
+
+            console.error(err);
+
+        }
+        PROMPT.close();
+    });
 });
 
 //   ---Login---
@@ -50,7 +73,24 @@ BOT.on('message', message => {
     collector = new DISCORD.MessageCollector(message.channel, m => m.author.bot, { max: 1 });
     const args = message.content.slice(PREFIX.length).split(/ +/);
     const command = args.shift().toLowerCase();
-    console.log(args);
+    let character; 
+    party.forEach(c => {
+        console.log(c.name);
+        console.log(c.player);
+        if (c.player == message.author.id) {
+            console.log(message.author.id);
+            character = c;
+            return;
+        }
+    });
+    
+    if (character) {
+        console.log(character.name);
+    } else {
+        console.log("this player has no character");
+    }
+    
+    console.log('args: ' + args);
 
     if (command === 'ping'){ // ---ping---
 
@@ -58,7 +98,7 @@ BOT.on('message', message => {
 
     } else if (command === 'initiative'){ // ---initiative---
 
-        BOT.commands.get('initiative').execute(BOT, ID, message, args);
+        BOT.commands.get('initiative').execute(BOT, character, message, args);
 
     } else if (command === 'priority'){ // ---priority---
 
@@ -78,7 +118,7 @@ BOT.on('message', message => {
 
     } else if (command.endsWith('check')){ // ---check---
 
-        BOT.commands.get('check').execute(BOT, ID, message, command);
+        BOT.commands.get('check').execute(BOT, character, message, command);
 
     } else if (command === 'roll'){ // ---roll---
 
@@ -88,6 +128,13 @@ BOT.on('message', message => {
 
         BOT.commands.get('help').execute(message, args);
 
+    } else if (command === 'char'){ // ---viewChar---
+    
+        BOT.commands.get('char').execute(message, session, fs, args);
+    
+    } else if (command === 'newcharacter'){ // ---newCharacter---
+        
+        BOT.commands.get('newCharacter').execute(BOT, message, fs, args);
     }
     
     // ---Collector---
