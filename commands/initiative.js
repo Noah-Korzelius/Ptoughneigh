@@ -1,3 +1,6 @@
+/**
+ * TODO - Check ids in the list and don't let the same person add to the list again
+ */
 const { execute } = require("./roll");
 
 module.exports = {

@@ -2,31 +2,40 @@
 
 class Character {
     /**
-     * constructor takes in a file name and parses the file for 
+     * constructor takes in a filename or array and parses it for 
      * data to assign to a character
+     * 
+     * @param {a file or array of stats to assign to a character} inStats
      */
-    constructor(inFile) {
+    constructor(inStats) {
         const fs = require('fs');
         let arr;
-        try {
+        if (typeof(inStats) ==='string') {
 
-            let data = fs.readFileSync(String(inFile), 'utf8'); 
-            arr = data.split(/[\|\r\n]/gm);
-            for (let x = 0; x < arr.length; x++) {
-                if (arr[x] === '') {
-                    arr.splice(x, 1);
-                    x--;
+            try {
+
+                let data = fs.readFileSync(String(inStats), 'utf8'); 
+                arr = data.split(/[\|\r\n]/gm);
+                for (let x = 0; x < arr.length; x++) {
+                    if (arr[x] === '') {
+                        arr.splice(x, 1);
+                        x--;
+                    }
                 }
+                console.log(arr);
+
+            } catch (err) {
+
+                console.error(err);
+
             }
-            console.log(arr);
 
-        } catch (err) {
+        } else { //assume that inStats is already an Array
 
-            console.error(err);
+            arr = inStats;
 
         }
-        // let match = arr[0].match(/\d+/);
-        // console.log(arr[0].match(/\d+/));
+
         this.player = arr[0].match(/\d+/)[0]; //this needs to be left as a string bc overflow (I think)
         this.name = arr[1];
         this.race = arr[2];

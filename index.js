@@ -135,6 +135,11 @@ BOT.on('message', message => {
     } else if (command === 'newcharacter'){ // ---newCharacter---
         
         BOT.commands.get('newCharacter').execute(BOT, message, fs, args);
+    
+    } else if (command === 'info'){ //---info---
+
+        BOT.commands.get('info').execute(BOT, message, args);
+    
     }
     
     // ---Collector---
