@@ -6,7 +6,29 @@ const { execute } = require("./roll");
 module.exports = {
     name: "initiative",
     description: "rolls for initiative (dex check)",
-    execute(BOT, character, message, args){
+    execute(BOT, character, interaction, args){
+        let roll = BOT.commands.get('roll').getRandomIntInclusive(1, 20);
+        console.log(`Invoker: ${interaction.member.user.id}`);
+
+        roll+=character.dexMod;
+        console.log("modifier: " + character.dexMod);
+        
+        try {
+            BOT.api.interactions(interaction.id, interaction.token).callback.post({
+                data: {
+                    type: 4,
+                    data: {
+                        content: `your initiative is ${roll}`
+                    }
+                }
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    },
+    
+    
+    execute_depreciated(BOT, character, message, args){
         let roll = BOT.commands.get('roll').getRandomIntInclusive(1, 20);
         
         console.log(`Message author: ${message.author}`);

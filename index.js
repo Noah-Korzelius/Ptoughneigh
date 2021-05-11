@@ -1,4 +1,3 @@
-
 //   ---Constants---
 const DISCORD = require('discord.js');
 const PROMPT = require('readline').createInterface({
@@ -7,10 +6,12 @@ const PROMPT = require('readline').createInterface({
 });
 const fs = require('fs');
 const path = require('path');
+const https = require('https')
 const { Character } = require('./classes/character');
 
+
 const BOT = new DISCORD.Client();
-const TOKEN = '';
+const TOKEN = 'NzMzMzM4ODUwODcyNjU1OTQz.XxBtBg.sFuDZ9tm8CLiFO30XiNWIGqNh8U';
 const PREFIX = "!";
 const REGISTRY = new Array('733401536037781585', '758512646005325875', '755534009668206754');
 const CAMPAIGNS = new Array('cmpn_1', 'cmpn_1', 'cmpn_2');
@@ -64,6 +65,93 @@ BOT.once('ready', () =>{
 //   ---Login---
 BOT.login(TOKEN);
 
+// ---testing slash commands---
+
+BOT.on('ready', () => {
+    
+    //post commands to the guilds ptoughneigh is in.
+
+    BOT.api.applications('733338850872655943').guilds('668853927738998865').commands.post({
+        data: {
+            name: "roll",
+            description: "Returns a random number between 1 and a passed value",
+            options: [
+                {
+                    name: 'die',
+                    description: 'the type of die to roll',
+                    type: 3,
+                    required: true,
+                    choices: [
+                        {
+                            name: 'd20',
+                            value: '20'
+                        },
+                        {
+                            name: 'd6',
+                            value: '6'
+                        }
+                    ]
+                }
+            ]
+        }
+    });
+
+
+    //guilds('733339844058808370')
+
+    BOT.api.applications('733338850872655943').guilds('668853927738998865').commands.post({
+        data: {
+            name: "initiative",
+            description: "Returns an initiative value for the invoking member"
+        }
+    });
+
+    BOT.ws.on('INTERACTION_CREATE', async interaction => {
+        const command = interaction.data.name.toLowerCase();
+        const args = interaction.data.options;
+
+        //get the invoking user's character from the party
+        let character; 
+        party.forEach(c => {
+            console.log(c.name);
+            console.log(c.player);
+            if (c.player == interaction.member.user.id) {
+                //console.log(message.author.id);
+                character = c;
+                return;
+            }
+        });
+        
+        //print args if it exists
+        if (args){
+            console.log(args[0].value);
+        }
+        
+        if (command === 'roll') {
+            try {
+                let roll = BOT.commands.get('roll').roll(args[0].value);
+                BOT.api.interactions(interaction.id, interaction.token).callback.post({
+                    data: {
+                        type: 4,
+                        data: {
+                            content: roll
+                        }
+                    }
+                });
+            } catch (error) {
+                console.log("roll didn't work");
+            }
+        } else if (command === 'initiative') {
+            try {
+                BOT.commands.get('initiative').execute(BOT, character, interaction, args);
+            } catch (error) {
+                console.log("initiative didn't work");
+                console.error(error);
+            }
+        }
+    });
+});
+
 
 //   ---Command Handler---
 BOT.on('message', message => {
@@ -98,7 +186,7 @@ BOT.on('message', message => {
 
     } else if (command === 'initiative'){ // ---initiative---
 
-        BOT.commands.get('initiative').execute(BOT, character, message, args);
+        BOT.commands.get('initiative_depreciated').execute(BOT, character, message, args);
 
     } else if (command === 'priority'){ // ---priority---
 
