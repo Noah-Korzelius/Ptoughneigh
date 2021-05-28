@@ -11,7 +11,8 @@ const { Character } = require('./classes/character');
 
 
 const BOT = new DISCORD.Client();
-const TOKEN = 'NzMzMzM4ODUwODcyNjU1OTQz.XxBtBg.sFuDZ9tm8CLiFO30XiNWIGqNh8U';
+const TOKEN = 'NzMzMzM4ODUwODcyNjU1OTQz.XxBtBg.1oC9RLyAKvBxHP-SMBSFvkn-gXA';
+const APPID = '733338850872655943';
 const PREFIX = "!";
 const REGISTRY = new Array('733401536037781585', '758512646005325875', '755534009668206754');
 const CAMPAIGNS = new Array('cmpn_1', 'cmpn_1', 'cmpn_2');
@@ -71,7 +72,7 @@ BOT.on('ready', () => {
     
     //post commands to the guilds ptoughneigh is in.
 
-    BOT.api.applications('733338850872655943').guilds('668853927738998865').commands.post({
+    BOT.api.applications(APPID).commands.post({
         data: {
             name: "roll",
             description: "Returns a random number between 1 and a passed value",
@@ -95,20 +96,50 @@ BOT.on('ready', () => {
             ]
         }
     });
-
-
     //guilds('733339844058808370')
 
-    BOT.api.applications('733338850872655943').guilds('668853927738998865').commands.post({
+    BOT.api.applications(APPID).commands.post({
         data: {
             name: "initiative",
             description: "Returns an initiative value for the invoking member"
         }
     });
 
+    BOT.api.applications(APPID).commands.post({
+        data: {
+            name: "priority",
+            description: "returns a list of initiative for all active combatants"
+        }
+    });
+
+    BOT.api.applications(APPID).commands.post({
+        data: {
+            name: "add",
+            description: "Adds a character/monster to the initiative list",
+            options: [
+                {
+                    name: 'name',
+                    description: 'name of the added character/monster',
+                    type: 3,
+                    required: true,
+                    choices: []
+                },
+                {
+                    name: 'initiative',
+                    description: 'initiative of the added character/monster',
+                    type: 3,
+                    required: true,
+                    choices: []
+                }
+            ]
+        }
+    })
+
     BOT.ws.on('INTERACTION_CREATE', async interaction => {
         const command = interaction.data.name.toLowerCase();
         const args = interaction.data.options;
+        //collector = new DISCORD.MessageCollector(interaction.channel_id, m => m.author.bot, { max: 1 });
+
 
         //get the invoking user's character from the party
         let character; 
@@ -124,6 +155,7 @@ BOT.on('ready', () => {
         
         //print args if it exists
         if (args){
+            console.log(`args: ${args}`);
             console.log(args[0].value);
         }
         
@@ -140,6 +172,7 @@ BOT.on('ready', () => {
                 });
             } catch (error) {
                 console.log("roll didn't work");
+                console.error(error);
             }
         } else if (command === 'initiative') {
             try {
@@ -148,7 +181,34 @@ BOT.on('ready', () => {
                 console.log("initiative didn't work");
                 console.error(error);
             }
+        } else if (command === 'priority') {
+            try {
+                BOT.commands.get('priority').execute(BOT, turnOrder, interaction);
+            } catch (error) {
+                console.log("priority didn't work");
+                console.error(error);        
+            }
+        } else if (command === 'add') {
+            try {
+                turnOrder = BOT.commands.get('add').execute(BOT, turnOrder, interaction, args);
+            } catch (error) {
+                console.log("add didn't work");
+                console.error(error);
+            }
         }
+        
+        // console.log(interaction);
+        // BOT.api.interactions(interaction.id, interaction.token).callback.fetch({
+        //     //I'm not really sure how to fetch an interaction response, but I'm sure there's a way I can do so.
+        // })
+        //collect bot responses and cache initiatives
+        // collector.on('collect', m => {
+        //     log.push(m);
+        //     if (command === 'initiative'){
+        //         turnOrder.push([m.content.split(' ')[4], m.content.split(' ')[0]]);
+        //     }
+        //     console.log(`Collected ${command}: ` + m);
+        // });
     });
 });
 
@@ -186,15 +246,15 @@ BOT.on('message', message => {
 
     } else if (command === 'initiative'){ // ---initiative---
 
-        BOT.commands.get('initiative_depreciated').execute(BOT, character, message, args);
+        BOT.commands.get('initiative').execute_depreciated(BOT, character, message, args);
 
     } else if (command === 'priority'){ // ---priority---
 
-        BOT.commands.get('priority').execute(BOT, message, turnOrder);
+        BOT.commands.get('priority').execute_depreciated(BOT, turnOrder, message);
 
     } else if (command === 'add'){ // ---add---
 
-        turnOrder = BOT.commands.get('add').execute(turnOrder, message, args); 
+        turnOrder = BOT.commands.get('add').execute_depreciated(turnOrder, message, args); 
 
     } else if (command === 'rm'){ // ---rm---
 
